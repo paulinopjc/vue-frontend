@@ -47,8 +47,12 @@ let activeFilters: EFilters = {}
 
 onMounted(async () => {
   store.fetchExpenses()
-  const res = await expenseApi.getCategories()
-  categories.value = res.data.data
+  try {
+    const res = await expenseApi.getCategories()
+    categories.value = res.data.data
+  } catch {
+    // categories filter unavailable; expense list still works
+  }
 })
 
 function onFilter(filters: EFilters) {

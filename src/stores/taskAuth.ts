@@ -13,7 +13,14 @@ export const useTaskAuthStore = defineStore('taskAuth', () => {
   function loadFromStorage() {
     token.value = localStorage.getItem(TOKEN_KEY)
     const stored = localStorage.getItem(USER_KEY)
-    user.value = stored ? JSON.parse(stored) : null
+    if (stored) {
+      try {
+        user.value = JSON.parse(stored)
+      } catch {
+        localStorage.removeItem(USER_KEY)
+        user.value = null
+      }
+    }
   }
 
   async function login(email: string, password: string) {
