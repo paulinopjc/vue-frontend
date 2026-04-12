@@ -25,6 +25,7 @@ export const useExpenseAuthStore = defineStore('expenseAuth', () => {
 
   async function login(email: string, password: string) {
     const res = await expenseApi.login(email, password)
+    if (!res.data.token) throw new Error('Login failed')
     token.value = res.data.token
     user.value = res.data.user
     localStorage.setItem(TOKEN_KEY, res.data.token)
