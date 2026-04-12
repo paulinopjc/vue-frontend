@@ -27,6 +27,7 @@
           <option value="">Select category</option>
           <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
         </select>
+        <p v-if="categoryError" class="text-xs text-red-500 mt-1">{{ categoryError }}</p>
       </div>
 
       <div class="flex gap-3 pt-2">
@@ -53,12 +54,17 @@ const router = useRouter()
 const categories = ref<Category[]>([])
 const saving = ref(false)
 const error = ref('')
+const categoryError = ref('')
 
 const form = ref({ title: '', description: '', amount: '', date: '', category_id: '' as number | '' })
 
 onMounted(async () => {
-  const res = await expenseApi.getCategories()
-  categories.value = res.data.data
+  try {
+    const res = await expenseApi.getCategories()
+    categories.value = res.data.data
+  } catch {
+    categoryError.value = 'Could not load categories. Please refresh the page.'
+  }
 })
 
 async function submit() {
