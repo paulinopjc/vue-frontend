@@ -25,19 +25,19 @@ export const useExpenseAuthStore = defineStore('expenseAuth', () => {
 
   async function login(email: string, password: string) {
     const res = await expenseApi.login(email, password)
-    if (!res.data.token) throw new Error('Login failed')
-    token.value = res.data.token
-    user.value = res.data.user
-    localStorage.setItem(TOKEN_KEY, res.data.token)
-    localStorage.setItem(USER_KEY, JSON.stringify(res.data.user))
+    if (!res.data.data.token) throw new Error('Login failed')
+    token.value = res.data.data.token
+    user.value = res.data.data.user
+    localStorage.setItem(TOKEN_KEY, res.data.data.token)
+    localStorage.setItem(USER_KEY, JSON.stringify(res.data.data.user))
   }
 
   async function register(name: string, email: string, password: string, passwordConfirmation: string) {
     const res = await expenseApi.register(name, email, password, passwordConfirmation)
-    token.value = res.data.token
-    user.value = res.data.user
-    localStorage.setItem(TOKEN_KEY, res.data.token)
-    localStorage.setItem(USER_KEY, JSON.stringify(res.data.user))
+    token.value = res.data.data.token
+    user.value = res.data.data.user
+    localStorage.setItem(TOKEN_KEY, res.data.data.token)
+    localStorage.setItem(USER_KEY, JSON.stringify(res.data.data.user))
   }
 
   function logout() {
