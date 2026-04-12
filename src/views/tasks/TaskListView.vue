@@ -37,10 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTasksStore } from '@/stores/tasks'
-import { usePagination } from '@/composables/usePagination'
 import TaskCard from '@/components/tasks/TaskCard.vue'
 import TaskFilters from '@/components/tasks/TaskFilters.vue'
 import LoadingSpinner from '@/components/shared/LoadingSpinner.vue'
@@ -50,7 +49,7 @@ import type { TaskFilters as TFilters } from '@/types/task'
 
 const store = useTasksStore()
 const router = useRouter()
-const { hasMore } = usePagination(store)
+const hasMore = computed(() => !!store.nextCursor)
 const deleteId = ref<number | null>(null)
 let activeFilters: TFilters = {}
 
