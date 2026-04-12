@@ -28,10 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useExpensesStore } from '@/stores/expenses'
-import { usePagination } from '@/composables/usePagination'
 import { expenseApi } from '@/api/expenseApi'
 import ExpenseCard from '@/components/expenses/ExpenseCard.vue'
 import ExpenseFilters from '@/components/expenses/ExpenseFilters.vue'
@@ -41,7 +40,7 @@ import type { Category, ExpenseFilters as EFilters } from '@/types/expense'
 
 const store = useExpensesStore()
 const router = useRouter()
-const { hasMore } = usePagination(store)
+const hasMore = computed(() => !!store.nextCursor)
 
 const categories = ref<Category[]>([])
 let activeFilters: EFilters = {}
