@@ -17,10 +17,10 @@ const client = createApiClient(import.meta.env.VITE_EXPENSE_API_URL, TOKEN_KEY)
 
 export const expenseApi = {
   // Auth
-  login(email: string, password: string): Promise<{ data: AuthResponse }> {
+  login(email: string, password: string): Promise<{ data: { data: AuthResponse } }> {
     return client.post('/login', { email, password })
   },
-  register(name: string, email: string, password: string, password_confirmation: string): Promise<{ data: AuthResponse }> {
+  register(name: string, email: string, password: string, password_confirmation: string): Promise<{ data: { data: AuthResponse } }> {
     return client.post('/register', { name, email, password, password_confirmation })
   },
 

@@ -17,7 +17,7 @@ describe('taskAuth store', () => {
   })
 
   it('login sets token and user', async () => {
-    vi.mocked(taskApi.login).mockResolvedValue({ data: { token: 'abc123', user: mockUser } } as never)
+    vi.mocked(taskApi.login).mockResolvedValue({ data: { data: { token: 'abc123', user: mockUser } } } as never)
     const store = useTaskAuthStore()
     await store.login('alice@example.com', 'password')
     expect(store.token).toBe('abc123')
@@ -26,7 +26,7 @@ describe('taskAuth store', () => {
   })
 
   it('logout clears token and user', async () => {
-    vi.mocked(taskApi.login).mockResolvedValue({ data: { token: 'abc123', user: mockUser } } as never)
+    vi.mocked(taskApi.login).mockResolvedValue({ data: { data: { token: 'abc123', user: mockUser } } } as never)
     const store = useTaskAuthStore()
     await store.login('alice@example.com', 'password')
     store.logout()
@@ -45,7 +45,7 @@ describe('taskAuth store', () => {
   })
 
   it('isAuthenticated returns true when token is set', async () => {
-    vi.mocked(taskApi.login).mockResolvedValue({ data: { token: 'abc123', user: mockUser } } as never)
+    vi.mocked(taskApi.login).mockResolvedValue({ data: { data: { token: 'abc123', user: mockUser } } } as never)
     const store = useTaskAuthStore()
     expect(store.isAuthenticated()).toBe(false)
     await store.login('alice@example.com', 'password')
