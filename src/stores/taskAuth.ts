@@ -25,6 +25,7 @@ export const useTaskAuthStore = defineStore('taskAuth', () => {
 
   async function login(email: string, password: string) {
     const res = await taskApi.login(email, password)
+    if (!res.data.token) throw new Error('Login failed')
     token.value = res.data.token
     user.value = res.data.user
     localStorage.setItem(TOKEN_KEY, res.data.token)
