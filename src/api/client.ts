@@ -17,8 +17,11 @@ export function createApiClient(baseURL: string, tokenKey: string): AxiosInstanc
     (error) => {
       if (error.response?.status === 401) {
         localStorage.removeItem(tokenKey)
-        const prefix = tokenKey.replace('_token', '')
-        window.location.href = `/${prefix}s/login`
+        const userKey = tokenKey.replace('_token', '_user')
+        localStorage.removeItem(userKey)
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login'
+        }
       }
       return Promise.reject(error)
     },

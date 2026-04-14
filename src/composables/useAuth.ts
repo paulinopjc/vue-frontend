@@ -7,9 +7,10 @@ export function useTaskAuth() {
   return {
     user: computed(() => store.user),
     isAuthenticated: computed(() => !!store.token),
-    login: store.login,
+    isAdmin: computed(() => store.user?.role === 'admin'),
+    loginWithGoogle: store.loginWithGoogle,
     logout: store.logout,
-    register: store.register,
+    refreshUser: store.refreshUser,
   }
 }
 
@@ -18,8 +19,9 @@ export function useExpenseAuth() {
   return {
     user: computed(() => store.user),
     isAuthenticated: computed(() => !!store.token),
-    login: store.login,
+    isAdmin: computed(() => store.user?.role === 'admin'),
+    loginWithGoogle: store.loginWithGoogle,
     logout: store.logout,
-    register: store.register,
+    refreshUser: store.refreshUser,
   }
 }

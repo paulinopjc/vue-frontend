@@ -1,5 +1,5 @@
 import { createApiClient } from './client'
-import type { AuthResponse } from '@/types/auth'
+import type { AuthResponse, User, CreateUserPayload } from '@/types/auth'
 import type { Task, Tag, PaginatedTasks, TaskFilters } from '@/types/task'
 
 const TOKEN_KEY = 'task_token'
@@ -7,11 +7,14 @@ const client = createApiClient(import.meta.env.VITE_TASK_API_URL, TOKEN_KEY)
 
 export const taskApi = {
   // Auth
-  login(email: string, password: string): Promise<{ data: { data: AuthResponse } }> {
-    return client.post('/login', { email, password })
+  loginWithGoogle(idToken: string): Promise<{ data: { data: AuthResponse } }> {
+    return client.post('/auth/google', { id_token: idToken })
   },
-  register(name: string, email: string, password: string, password_confirmation: string): Promise<{ data: { data: AuthResponse } }> {
-    return client.post('/register', { name, email, password, password_confirmation })
+  me(): Promise<{ data: { data: User } }> {
+    return client.get('/me')
+  },
+  logout(): Promise<void> {
+    return client.post('/logout')
   },
 
   // Tasks
@@ -42,5 +45,19 @@ export const taskApi = {
   // Tags
   getTags(): Promise<{ data: { data: Tag[] } }> {
     return client.get('/tags')
+  },
+
+  // Admin — users
+  listUsers(): Promise<{ data: { data: User[] } }> {
+    return client.get('/admin/users')
+  },
+  createUser(payload: CreateUserPayload): Promise<{ data: { data: User } }> {
+    return client.post('/admin/users', payload)
+  },
+  updateUser(id: number, payload: Partial<CreateUserPayload>): Promise<{ data: { data: User } }> {
+    return client.patch(`/admin/users/${id}`, payload)
+  },
+  toggleUser(id: number): Promise<{ data: { data: User } }> {
+    return client.patch(`/admin/users/${id}/toggle-active`)
   },
 }

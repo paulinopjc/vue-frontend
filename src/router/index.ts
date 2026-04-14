@@ -5,35 +5,46 @@ const router = createRouter({
   routes: [
     { path: '/', redirect: '/tasks' },
 
-    // Task Manager — public
-    { path: '/tasks/login', component: () => import('@/views/LoginView.vue'), meta: { app: 'task' } },
-    { path: '/tasks/register', component: () => import('@/views/RegisterView.vue'), meta: { app: 'task' } },
+    // Unified login (works for both apps)
+    { path: '/login', component: () => import('@/views/LoginView.vue') },
+
+    // Legacy login URLs redirect to the unified login
+    { path: '/tasks/login', redirect: '/login' },
+    { path: '/expenses/login', redirect: '/login' },
 
     // Task Manager — protected
     { path: '/tasks', component: () => import('@/views/tasks/TaskListView.vue'), meta: { requiresTaskAuth: true, title: 'Tasks' } },
     { path: '/tasks/create', component: () => import('@/views/tasks/TaskCreateView.vue'), meta: { requiresTaskAuth: true, title: 'New Task' } },
     { path: '/tasks/:id/edit', component: () => import('@/views/tasks/TaskEditView.vue'), meta: { requiresTaskAuth: true, title: 'Edit Task' } },
-
-    // Expense Tracker — public
-    { path: '/expenses/login', component: () => import('@/views/LoginView.vue'), meta: { app: 'expense' } },
-    { path: '/expenses/register', component: () => import('@/views/RegisterView.vue'), meta: { app: 'expense' } },
+    { path: '/tasks/admin/users', component: () => import('@/views/admin/TaskUsersView.vue'), meta: { requiresTaskAuth: true, requiresTaskAdmin: true, title: 'Users' } },
 
     // Expense Tracker — protected
     { path: '/expenses', component: () => import('@/views/expenses/ExpenseListView.vue'), meta: { requiresExpenseAuth: true, title: 'Expenses' } },
     { path: '/expenses/create', component: () => import('@/views/expenses/ExpenseCreateView.vue'), meta: { requiresExpenseAuth: true, title: 'New Expense' } },
     { path: '/expenses/reports', component: () => import('@/views/expenses/ReportsView.vue'), meta: { requiresExpenseAuth: true, title: 'Reports' } },
     { path: '/expenses/:id', component: () => import('@/views/expenses/ExpenseDetailView.vue'), meta: { requiresExpenseAuth: true, title: 'Expense Detail' } },
+    { path: '/expenses/admin/users', component: () => import('@/views/admin/ExpenseUsersView.vue'), meta: { requiresExpenseAuth: true, requiresExpenseAdmin: true, title: 'Users' } },
   ],
 })
 
+function readUser(key: string): { role?: string } | null {
+  const stored = localStorage.getItem(key)
+  if (!stored) return null
+  try {
+    return JSON.parse(stored)
+  } catch {
+    return null
+  }
+}
+
 router.beforeEach((to) => {
   if (to.meta.requiresTaskAuth) {
-    const token = localStorage.getItem('task_token')
-    if (!token) return '/tasks/login'
+    if (!localStorage.getItem('task_token')) return '/login'
+    if (to.meta.requiresTaskAdmin && readUser('task_user')?.role !== 'admin') return '/tasks'
   }
   if (to.meta.requiresExpenseAuth) {
-    const token = localStorage.getItem('expense_token')
-    if (!token) return '/expenses/login'
+    if (!localStorage.getItem('expense_token')) return '/login'
+    if (to.meta.requiresExpenseAdmin && readUser('expense_user')?.role !== 'admin') return '/expenses'
   }
 })
 
