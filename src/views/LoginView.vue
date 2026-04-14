@@ -11,7 +11,7 @@
       <div v-if="loading" class="mb-4 text-sm text-gray-500">Signing in&hellip;</div>
 
       <div class="flex justify-center">
-        <GoogleLogin :callback="handleCredential" prompt />
+        <GoogleSignInButton @success="handleCredential" @error="handleError" />
       </div>
 
       <div class="mt-6 pt-6 border-t border-gray-100 text-xs text-gray-500 space-y-1">
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { GoogleLogin, type CredentialResponse } from 'vue3-google-signin'
+import { GoogleSignInButton, type CredentialResponse } from 'vue3-google-signin'
 import { useTaskAuthStore } from '@/stores/taskAuth'
 import { useExpenseAuthStore } from '@/stores/expenseAuth'
 import { useTaskAuth, useExpenseAuth } from '@/composables/useAuth'
@@ -81,5 +81,11 @@ async function handleCredential(response: CredentialResponse) {
   } else if (expenseOk) {
     router.push('/expenses')
   }
+}
+
+function handleError() {
+  taskFailed.value = true
+  expenseFailed.value = true
+  loading.value = false
 }
 </script>
