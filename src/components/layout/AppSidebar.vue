@@ -11,18 +11,25 @@
         <router-link
           to="/tasks"
           class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
-          :class="{ 'bg-gray-700 text-white': route.path.startsWith('/tasks') && !route.path.endsWith('/login') && !route.path.endsWith('/register') }"
+          :class="{ 'bg-gray-700 text-white': route.path === '/tasks' }"
         >
           Tasks
         </router-link>
-        <template v-if="taskAuth.isAuthenticated.value">
-          <button
-            @click="taskAuth.logout()"
-            class="w-full text-left flex items-center px-2 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
-          >
-            Logout ({{ taskAuth.user.value?.name }})
-          </button>
-        </template>
+        <router-link
+          v-if="taskAuth.isAuthenticated.value && taskAuth.isAdmin.value"
+          to="/tasks/admin/users"
+          class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
+          :class="{ 'bg-gray-700 text-white': route.path === '/tasks/admin/users' }"
+        >
+          Users
+        </router-link>
+        <button
+          v-if="taskAuth.isAuthenticated.value"
+          @click="taskAuth.logout()"
+          class="w-full text-left flex items-center px-2 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
+        >
+          Logout ({{ taskAuth.user.value?.name }})
+        </button>
       </div>
 
       <!-- Expense Tracker -->
@@ -31,7 +38,7 @@
         <router-link
           to="/expenses"
           class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
-          :class="{ 'bg-gray-700 text-white': route.path.startsWith('/expenses') && !route.path.endsWith('/login') && !route.path.endsWith('/register') }"
+          :class="{ 'bg-gray-700 text-white': route.path === '/expenses' }"
         >
           Expenses
         </router-link>
@@ -43,14 +50,21 @@
         >
           Reports
         </router-link>
-        <template v-if="expenseAuth.isAuthenticated.value">
-          <button
-            @click="expenseAuth.logout()"
-            class="w-full text-left flex items-center px-2 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
-          >
-            Logout ({{ expenseAuth.user.value?.name }})
-          </button>
-        </template>
+        <router-link
+          v-if="expenseAuth.isAuthenticated.value && expenseAuth.isAdmin.value"
+          to="/expenses/admin/users"
+          class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
+          :class="{ 'bg-gray-700 text-white': route.path === '/expenses/admin/users' }"
+        >
+          Users
+        </router-link>
+        <button
+          v-if="expenseAuth.isAuthenticated.value"
+          @click="expenseAuth.logout()"
+          class="w-full text-left flex items-center px-2 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors"
+        >
+          Logout ({{ expenseAuth.user.value?.name }})
+        </button>
       </div>
     </nav>
   </aside>

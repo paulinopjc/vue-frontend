@@ -9,6 +9,7 @@ const USER_KEY = 'task_user'
 export const useTaskAuthStore = defineStore('taskAuth', () => {
   const token = ref<string | null>(null)
   const user = ref<User | null>(null)
+  const error = ref<string | null>(null)
 
   function loadFromStorage() {
     token.value = localStorage.getItem(TOKEN_KEY)
@@ -23,24 +24,45 @@ export const useTaskAuthStore = defineStore('taskAuth', () => {
     }
   }
 
-  async function login(email: string, password: string) {
-    const res = await taskApi.login(email, password)
-    if (!res.data.data.token) throw new Error('Login failed')
-    token.value = res.data.data.token
-    user.value = res.data.data.user
-    localStorage.setItem(TOKEN_KEY, res.data.data.token)
-    localStorage.setItem(USER_KEY, JSON.stringify(res.data.data.user))
+  async function loginWithGoogle(idToken: string): Promise<boolean> {
+    error.value = null
+    try {
+      const res = await taskApi.loginWithGoogle(idToken)
+      token.value = res.data.data.token
+      user.value = res.data.data.user
+      localStorage.setItem(TOKEN_KEY, res.data.data.token)
+      localStorage.setItem(USER_KEY, JSON.stringify(res.data.data.user))
+      return true
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
+      const msg =
+        err?.response?.data?.errors?.email?.[0] ||
+        err?.response?.data?.message ||
+        'Sign-in failed.'
+      error.value = msg
+      return false
+    }
   }
 
-  async function register(name: string, email: string, password: string, passwordConfirmation: string) {
-    const res = await taskApi.register(name, email, password, passwordConfirmation)
-    token.value = res.data.data.token
-    user.value = res.data.data.user
-    localStorage.setItem(TOKEN_KEY, res.data.data.token)
-    localStorage.setItem(USER_KEY, JSON.stringify(res.data.data.user))
+  async function refreshUser() {
+    if (!token.value) return
+    try {
+      const res = await taskApi.me()
+      user.value = res.data.data
+      localStorage.setItem(USER_KEY, JSON.stringify(res.data.data))
+    } catch {
+      logout()
+    }
   }
 
-  function logout() {
+  async function logout() {
+    if (token.value) {
+      try {
+        await taskApi.logout()
+      } catch {
+        // ignore — clear local state regardless
+      }
+    }
     token.value = null
     user.value = null
     localStorage.removeItem(TOKEN_KEY)
@@ -48,6 +70,7 @@ export const useTaskAuthStore = defineStore('taskAuth', () => {
   }
 
   const isAuthenticated = () => !!token.value
+  const isAdmin = () => user.value?.role === 'admin'
 
-  return { token, user, loadFromStorage, login, register, logout, isAuthenticated }
+  return { token, user, error, loadFromStorage, loginWithGoogle, refreshUser, logout, isAuthenticated, isAdmin }
 })

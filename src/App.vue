@@ -18,5 +18,7 @@ const expenseAuth = useExpenseAuthStore()
 onMounted(() => {
   taskAuth.loadFromStorage()
   expenseAuth.loadFromStorage()
+  taskAuth.refreshUser()
+  expenseAuth.refreshUser()
 })
 </script>

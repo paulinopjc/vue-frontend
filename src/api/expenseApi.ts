@@ -1,5 +1,5 @@
 import { createApiClient } from './client'
-import type { AuthResponse } from '@/types/auth'
+import type { AuthResponse, User, CreateUserPayload } from '@/types/auth'
 import type {
   Expense,
   Category,
@@ -15,13 +15,22 @@ import type {
 const TOKEN_KEY = 'expense_token'
 const client = createApiClient(import.meta.env.VITE_EXPENSE_API_URL, TOKEN_KEY)
 
+export interface Team {
+  id: number
+  name: string
+  is_active: boolean
+}
+
 export const expenseApi = {
   // Auth
-  login(email: string, password: string): Promise<{ data: { data: AuthResponse } }> {
-    return client.post('/login', { email, password })
+  loginWithGoogle(idToken: string): Promise<{ data: { data: AuthResponse } }> {
+    return client.post('/auth/google', { id_token: idToken })
   },
-  register(name: string, email: string, password: string, password_confirmation: string): Promise<{ data: { data: AuthResponse } }> {
-    return client.post('/register', { name, email, password, password_confirmation })
+  me(): Promise<{ data: { data: User } }> {
+    return client.get('/me')
+  },
+  logout(): Promise<void> {
+    return client.post('/logout')
   },
 
   // Expenses
@@ -98,5 +107,30 @@ export const expenseApi = {
   },
   getByMember(params?: { date_from?: string; date_to?: string }): Promise<{ data: { data: MemberReportItem[] } }> {
     return client.get('/reports/by-member', { params })
+  },
+
+  // Admin — users
+  listUsers(): Promise<{ data: { data: User[] } }> {
+    return client.get('/admin/users')
+  },
+  createUser(payload: CreateUserPayload): Promise<{ data: { data: User } }> {
+    return client.post('/admin/users', payload)
+  },
+  updateUser(id: number, payload: Partial<CreateUserPayload>): Promise<{ data: { data: User } }> {
+    return client.patch(`/admin/users/${id}`, payload)
+  },
+  toggleUser(id: number): Promise<{ data: { data: User } }> {
+    return client.patch(`/admin/users/${id}/toggle-active`)
+  },
+
+  // Admin — teams
+  listTeams(): Promise<{ data: { data: Team[] } }> {
+    return client.get('/admin/teams')
+  },
+  createTeam(name: string): Promise<{ data: { data: Team } }> {
+    return client.post('/admin/teams', { name })
+  },
+  assignTeam(userId: number, teamId: number): Promise<{ data: { data: User } }> {
+    return client.patch(`/admin/users/${userId}/assign-team`, { team_id: teamId })
   },
 }
