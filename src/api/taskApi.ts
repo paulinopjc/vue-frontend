@@ -46,6 +46,9 @@ export const taskApi = {
   getTags(): Promise<{ data: { data: Tag[] } }> {
     return client.get('/tags')
   },
+  createTag(name: string): Promise<{ data: { data: Tag } }> {
+    return client.post('/tags', { name })
+  },
 
   // Admin — users
   listUsers(): Promise<{ data: { data: User[] } }> {

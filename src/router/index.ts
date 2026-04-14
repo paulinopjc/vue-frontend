@@ -16,6 +16,7 @@ const router = createRouter({
     { path: '/tasks', component: () => import('@/views/tasks/TaskListView.vue'), meta: { requiresTaskAuth: true, title: 'Tasks' } },
     { path: '/tasks/create', component: () => import('@/views/tasks/TaskCreateView.vue'), meta: { requiresTaskAuth: true, title: 'New Task' } },
     { path: '/tasks/:id/edit', component: () => import('@/views/tasks/TaskEditView.vue'), meta: { requiresTaskAuth: true, title: 'Edit Task' } },
+    { path: '/tasks/tags', component: () => import('@/views/tasks/TagsView.vue'), meta: { requiresTaskAuth: true, title: 'Tags' } },
     { path: '/tasks/admin/users', component: () => import('@/views/admin/TaskUsersView.vue'), meta: { requiresTaskAuth: true, requiresTaskAdmin: true, title: 'Users' } },
 
     // Expense Tracker — protected
@@ -23,7 +24,10 @@ const router = createRouter({
     { path: '/expenses/create', component: () => import('@/views/expenses/ExpenseCreateView.vue'), meta: { requiresExpenseAuth: true, title: 'New Expense' } },
     { path: '/expenses/reports', component: () => import('@/views/expenses/ReportsView.vue'), meta: { requiresExpenseAuth: true, title: 'Reports' } },
     { path: '/expenses/:id', component: () => import('@/views/expenses/ExpenseDetailView.vue'), meta: { requiresExpenseAuth: true, title: 'Expense Detail' } },
+    { path: '/expenses/:id/edit', component: () => import('@/views/expenses/ExpenseEditView.vue'), meta: { requiresExpenseAuth: true, title: 'Edit Expense' } },
     { path: '/expenses/admin/users', component: () => import('@/views/admin/ExpenseUsersView.vue'), meta: { requiresExpenseAuth: true, requiresExpenseAdmin: true, title: 'Users' } },
+    { path: '/expenses/admin/categories', component: () => import('@/views/admin/CategoriesView.vue'), meta: { requiresExpenseAuth: true, requiresExpenseAdmin: true, title: 'Categories' } },
+    { path: '/expenses/admin/teams', component: () => import('@/views/admin/TeamsView.vue'), meta: { requiresExpenseAuth: true, requiresExpenseAdmin: true, title: 'Teams' } },
   ],
 })
 
