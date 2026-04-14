@@ -16,6 +16,14 @@
           Tasks
         </router-link>
         <router-link
+          v-if="taskAuth.isAuthenticated.value"
+          to="/tasks/tags"
+          class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
+          :class="{ 'bg-gray-700 text-white': route.path === '/tasks/tags' }"
+        >
+          Tags
+        </router-link>
+        <router-link
           v-if="taskAuth.isAuthenticated.value && taskAuth.isAdmin.value"
           to="/tasks/admin/users"
           class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
@@ -49,6 +57,22 @@
           :class="{ 'bg-gray-700 text-white': route.path === '/expenses/reports' }"
         >
           Reports
+        </router-link>
+        <router-link
+          v-if="expenseAuth.isAuthenticated.value && expenseAuth.isAdmin.value"
+          to="/expenses/admin/categories"
+          class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
+          :class="{ 'bg-gray-700 text-white': route.path === '/expenses/admin/categories' }"
+        >
+          Categories
+        </router-link>
+        <router-link
+          v-if="expenseAuth.isAuthenticated.value && expenseAuth.isAdmin.value"
+          to="/expenses/admin/teams"
+          class="flex items-center px-2 py-2 text-sm rounded hover:bg-gray-800 transition-colors"
+          :class="{ 'bg-gray-700 text-white': route.path === '/expenses/admin/teams' }"
+        >
+          Teams
         </router-link>
         <router-link
           v-if="expenseAuth.isAuthenticated.value && expenseAuth.isAdmin.value"

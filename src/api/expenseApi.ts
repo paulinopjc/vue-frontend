@@ -97,6 +97,9 @@ export const expenseApi = {
   createCategory(name: string, description: string): Promise<{ data: { data: Category } }> {
     return client.post('/categories', { name, description })
   },
+  toggleCategory(id: number): Promise<{ data: { data: Category } }> {
+    return client.patch(`/admin/categories/${id}/toggle-active`)
+  },
 
   // Reports
   getTeamSummary(params?: { date_from?: string; date_to?: string }): Promise<{ data: { data: TeamSummaryItem[] } }> {
@@ -129,6 +132,9 @@ export const expenseApi = {
   },
   createTeam(name: string): Promise<{ data: { data: Team } }> {
     return client.post('/admin/teams', { name })
+  },
+  toggleTeam(id: number): Promise<{ data: { data: Team } }> {
+    return client.patch(`/admin/teams/${id}/toggle-active`)
   },
   assignTeam(userId: number, teamId: number): Promise<{ data: { data: User } }> {
     return client.patch(`/admin/users/${userId}/assign-team`, { team_id: teamId })

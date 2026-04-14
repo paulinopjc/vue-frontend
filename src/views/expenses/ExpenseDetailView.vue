@@ -15,7 +15,22 @@
             <span class="text-sm text-gray-400">{{ store.current.date }}</span>
           </div>
         </div>
-        <button @click="router.push('/expenses')" class="text-sm text-gray-400 hover:underline">← Back</button>
+        <div class="flex items-center gap-3">
+          <router-link
+            :to="`/expenses/${id}/edit`"
+            class="text-sm px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-50"
+          >
+            Edit
+          </router-link>
+          <button
+            @click="onDelete"
+            :disabled="deleting"
+            class="text-sm px-3 py-1.5 rounded border border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            {{ deleting ? 'Deleting…' : 'Delete' }}
+          </button>
+          <button @click="router.push('/expenses')" class="text-sm text-gray-400 hover:underline">← Back</button>
+        </div>
       </div>
 
       <!-- Description -->
@@ -61,6 +76,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useExpensesStore()
 const comments = ref<Comment[]>([])
+const deleting = ref(false)
 
 const id = Number(route.params.id)
 
@@ -76,5 +92,17 @@ async function reload() {
 async function reloadComments() {
   const res = await expenseApi.getComments(id)
   comments.value = res.data.data
+}
+
+async function onDelete() {
+  if (!confirm('Delete this expense? This cannot be undone.')) return
+  deleting.value = true
+  try {
+    await store.deleteExpense(id)
+    router.push('/expenses')
+  } catch {
+    deleting.value = false
+    alert('Failed to delete expense.')
+  }
 }
 </script>
