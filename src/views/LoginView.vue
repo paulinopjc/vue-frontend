@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 w-full max-w-sm">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8 w-full max-w-sm">
       <h2 class="text-lg font-semibold text-gray-900 mb-1">Sign in</h2>
       <p class="text-sm text-gray-500 mb-6">
         Use your authorized Google account to access Task Manager and Expense Tracker.
@@ -10,22 +10,35 @@
 
       <div v-if="loading" class="mb-4 text-sm text-gray-500">Signing in&hellip;</div>
 
+      <!-- Google Sign-In button (works on desktop + most mobile) -->
       <div class="flex justify-center">
-        <GoogleSignInButton @success="handleCredential" @error="handleError" />
+        <GoogleSignInButton
+          @success="handleCredential"
+          @error="handleError"
+          :ux-mode="isMobile ? 'redirect' : 'popup'"
+        />
       </div>
+
+      <!-- Fallback link for mobile if button doesn't render -->
+      <p v-if="isMobile" class="mt-3 text-center text-xs text-gray-400">
+        Button not showing?
+        <button @click="manualGoogleSignIn" class="text-indigo-600 hover:underline">
+          Try manual sign-in
+        </button>
+      </p>
 
       <div class="mt-6 pt-6 border-t border-gray-100 text-xs text-gray-500 space-y-1">
         <p v-if="taskAuth.isAuthenticated.value" class="text-green-700">
-          ✓ Task Manager: signed in as {{ taskAuth.user.value?.name }}
+          Task Manager: signed in as {{ taskAuth.user.value?.name }}
         </p>
         <p v-if="expenseAuth.isAuthenticated.value" class="text-green-700">
-          ✓ Expense Tracker: signed in as {{ expenseAuth.user.value?.name }}
+          Expense Tracker: signed in as {{ expenseAuth.user.value?.name }}
         </p>
         <p v-if="!taskAuth.isAuthenticated.value && taskFailed" class="text-amber-700">
-          ⚠ Task Manager: {{ taskAuth.user.value ? '' : (taskAuthStore.error || 'No access') }}
+          Task Manager: {{ taskAuth.user.value ? '' : (taskAuthStore.error || 'No access') }}
         </p>
         <p v-if="!expenseAuth.isAuthenticated.value && expenseFailed" class="text-amber-700">
-          ⚠ Expense Tracker: {{ expenseAuthStore.error || 'No access' }}
+          Expense Tracker: {{ expenseAuthStore.error || 'No access' }}
         </p>
       </div>
     </div>
@@ -49,6 +62,8 @@ const expenseAuth = useExpenseAuth()
 const loading = ref(false)
 const taskFailed = ref(false)
 const expenseFailed = ref(false)
+
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 
 const error = computed(() => {
   if (taskAuth.isAuthenticated.value || expenseAuth.isAuthenticated.value) return null
@@ -87,5 +102,14 @@ function handleError() {
   taskFailed.value = true
   expenseFailed.value = true
   loading.value = false
+}
+
+function manualGoogleSignIn() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  if (!clientId) return
+
+  const redirectUri = window.location.origin + '/auth/callback'
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=openid%20email%20profile`
+  window.location.href = url
 }
 </script>

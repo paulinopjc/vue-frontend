@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-56 bg-gray-900 text-white min-h-screen flex flex-col">
+  <aside class="w-56 bg-gray-900 text-white h-full min-h-screen flex flex-col">
     <div class="px-4 py-5 border-b border-gray-700">
       <h1 class="text-sm font-semibold tracking-widest uppercase text-gray-400">Dashboard</h1>
     </div>
